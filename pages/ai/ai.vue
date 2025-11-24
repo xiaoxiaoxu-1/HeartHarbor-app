@@ -1,13 +1,15 @@
 <template>
 	<view class="ai-page">
-		<!-- 顶部功能�?-->
+		<!-- 顶部功能区 -->
 		<view class="top-bar">
 			<view class="virtual-human-btn" @click="showVirtualHumanPreview">
 				<text class="virtual-icon">🎭</text>
 				<text class="virtual-text">虚拟人</text>
 			</view>
-			<view class="current-settings">
-				<text class="settings-text">当前：{{currentRole.name}}</text>
+			<view class="role-selector-btn" @click="showRoleSelector">
+				<text class="role-icon">{{currentRole.icon}}</text>
+				<text class="role-name">{{currentRole.name}}</text>
+				<text class="change-text">切换角色</text>
 			</view>
 			<view class="conversation-actions">
 				<view class="new-conversation-btn" @click="createNewConversation">
@@ -21,51 +23,25 @@
 			</view>
 		</view>
 		
-		<!-- 角色选择�?-->
-		<view class="role-section">
-			<text class="section-title">选择AI角色</text>
-			<scroll-view class="role-list" scroll-x="true" show-scrollbar="false" enable-flex>
-				<view class="role-item" v-for="role in roles" :key="role.id"
-					:class="{active: currentRole.id === role.id}"
-					@click="selectRole(role.id)">
-					<text class="role-icon">{{role.icon}}</text>
-					<text class="role-name">{{role.name}}</text>
-					<text class="role-desc">{{role.description}}</text>
-				</view>
-			</scroll-view>
-		</view>
+
 		
 
 		
-		<!-- 聊天主界�?-->
-		<view class="chat-container">
-			<scroll-view class="message-list" scroll-y="true" :scroll-top="scrollTop" enable-flex>
-				<view class="message-item" v-for="(msg, index) in messages" :key="index" 
-					:class="{'user-message': msg.role === 'user', 'ai-message': msg.role === 'assistant'}">
-					<view class="avatar">
-						<text v-if="msg.role === 'user'">👤</text>
-						<text v-else>{{currentRole.icon}}</text>
-					</view>
-					<view class="content">
-						<text>{{msg.content}}</text>
-					</view>
+		<!-- 虚拟人主题展示区域 -->
+		<view class="virtual-human-main">
+			<view class="virtual-avatar-container">
+				<view class="virtual-avatar">
+					<text class="avatar-icon">{{currentRole.icon}}</text>
 				</view>
-				
-				<!-- 加载状�?-->
-				<view class="message-item ai-message" v-if="isLoading">
-					<view class="avatar">
-						<text>{{currentRole.icon}}</text>
-					</view>
-					<view class="content">
-						<view class="loading-dots">
-							<text class="dot">.</text>
-							<text class="dot">.</text>
-							<text class="dot">.</text>
-						</view>
-					</view>
+				<view class="virtual-status">
+					<text class="status-text">{{currentRole.name}}正在倾听...</text>
+					<text class="status-desc">{{currentRole.description}}</text>
 				</view>
-			</scroll-view>
-			
+			</view>
+		</view>
+		
+		<!-- 对话聊天区域 -->
+		<view class="chat-section">
 			<view class="input-area">
 				<input class="input" v-model="inputText" placeholder="和AI伙伴聊聊..." @confirm="sendMessage" />
 				<button class="send-btn" @click="sendMessage">发送</button>
@@ -146,6 +122,35 @@
 				</view>
 			</view>
 		</view>
+		
+		<!-- 角色选择弹窗 - 心灵伙伴切换 -->
+		<view class="modal" v-if="showRoleSelectorModal">
+			<view class="modal-content role-selector-modal">
+				<view class="modal-header">
+					<text class="modal-title">选择心灵伙伴</text>
+					<text class="modal-close" @click="closeRoleSelector">×</text>
+				</view>
+				<view class="modal-body">
+					<view class="role-intro">
+						<text class="intro-text">不同的心灵伙伴将为您提供独特的陪伴体验</text>
+					</view>
+					<view class="role-grid">
+						<view class="role-card" 
+							v-for="role in roles" 
+							:key="role.id"
+							:class="{active: currentRole.id === role.id}"
+							@click="selectRole(role.id)">
+							<view class="role-icon-large">{{role.icon}}</view>
+							<view class="role-name-large">{{role.name}}</view>
+							<view class="role-desc-large">{{role.description}}</view>
+							<view class="role-tag" v-if="currentRole.id === role.id">
+								<text class="tag-text">当前</text>
+							</view>
+						</view>
+					</view>
+				</view>
+			</view>
+		</view>
 	</view>
 </template>
 
@@ -166,6 +171,7 @@
 				showVirtualHumanModal: false,
 				isLoading: false,
 				isLogin: false, // 登录状态
+				showRoleSelectorModal: false, // 角色选择弹窗状态
 				
 				// 对话管理相关
 				conversations: [],
@@ -605,6 +611,19 @@
 				}
 			},
 			
+			// 显示角色选择器
+			showRoleSelector() {
+				if (!this.checkLoginAndPrompt()) {
+					return
+				}
+				this.showRoleSelectorModal = true
+			},
+			
+			// 关闭角色选择器
+			closeRoleSelector() {
+				this.showRoleSelectorModal = false
+			},
+			
 			// 选择角色
 			selectRole(roleId) {
 				if (!this.checkLoginAndPrompt()) {
@@ -614,6 +633,9 @@
 				if (role) {
 					this.currentRole = role
 					uni.setStorageSync('ai_role', roleId)
+					
+					// 关闭角色选择器
+					this.closeRoleSelector()
 					
 					// 角色切换后的问候语
 					this.addRoleGreeting()
@@ -625,17 +647,15 @@
 			// 角色切换问候语
 			addRoleGreeting() {
 				const greetings = {
-					companion: '你好！我是你的心灵伙伴，我会用温暖的心倾听你的每一个故事。有什么想和我分享的吗？',
-					advisor: '您好！我是您的专业心理顾问，我将用专业的知识为您提供理性的分析和建议。请告诉我您的情况？'
+					companion: '你好！我是你的心灵伙伴，我会用温暖的心倾听你的每一个故事。',
+					advisor: '您好！我是您的专业心理顾问，我将用专业的知识为您提供理性的分析和建议。'
 				}
 				
-				this.messages.push({
-					role: 'assistant',
-					content: greetings[this.currentRole.id]
-				})
-				
-				this.$nextTick(() => {
-					this.scrollTop = 99999
+				// 这里可以通过其他方式显示问候语，比如临时状态提示
+				uni.showToast({
+					title: greetings[this.currentRole.id],
+					icon: 'none',
+					duration: 3000
 				})
 			},
 			
@@ -991,26 +1011,43 @@
 	font-weight: 600;
 }
 
-/* 当前设置显示 - 优化�?*/
-.current-settings {
-	background: rgba(255, 255, 255, 0.95);
-	padding: 18rpx 30rpx;
-	border-radius: 25rpx;
-	border: 2rpx solid #E6F3FF;
-	box-shadow: 0 6rpx 20rpx rgba(24, 144, 255, 0.15);
-	min-height: 80rpx;
+/* 角色选择按钮 - 新增 */
+.role-selector-btn {
 	display: flex;
 	align-items: center;
 	justify-content: center;
+	gap: 15rpx;
+	padding: 18rpx 30rpx;
+	background: linear-gradient(135deg, #E6F3FF 0%, #F5F9FF 100%);
+	border-radius: 25rpx;
+	border: 2rpx solid #1890FF;
+	box-shadow: 0 6rpx 20rpx rgba(24, 144, 255, 0.15);
+	min-height: 80rpx;
 	flex: 1;
 	margin: 0 20rpx;
+	transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.settings-text {
+.role-selector-btn:active {
+	background: #D6EBFF;
+	transform: scale(0.98);
+	box-shadow: 0 4rpx 12rpx rgba(24, 144, 255, 0.2);
+}
+
+.role-selector-btn .role-icon {
+	font-size: 36rpx;
+}
+
+.role-selector-btn .role-name {
 	font-size: 28rpx;
-	color: #333;
-	font-weight: 600;
-	text-align: center;
+	color: #1890FF;
+	font-weight: 700;
+}
+
+.role-selector-btn .change-text {
+	font-size: 24rpx;
+	color: #666;
+	font-weight: 500;
 }
 
 /* 对话操作按钮�?- 优化�?*/
@@ -1053,241 +1090,115 @@
 
 
 
-/* 功能区标�?- 优化�?*/
-.section-title {
-	display: block;
-	font-size: 34rpx;
-	font-weight: 700;
-	color: #1890FF;
-	margin-bottom: 25rpx;
+
+
+
+
+/* 虚拟人主题展示区域 - 扩大设计 */
+.virtual-human-main {
+	background: linear-gradient(135deg, #E6F3FF 0%, #F5F9FF 100%);
+	border-radius: 40rpx;
+	padding: 100rpx 60rpx;
+	margin-bottom: 40rpx;
 	text-align: center;
-	position: relative;
-}
-
-.section-title::after {
-	content: '';
-	display: block;
-	width: 60rpx;
-	height: 4rpx;
-	background: linear-gradient(90deg, #1890FF, #40A9FF);
-	border-radius: 2rpx;
-	margin: 10rpx auto 0;
-}
-
-/* 角色选择区样�?- 优化�?*/
-.role-section {
-	margin-bottom: 35rpx;
-	background: rgba(255, 255, 255, 0.95);
-	border-radius: 25rpx;
-	padding: 30rpx;
-	border: 2rpx solid #E6F3FF;
-	box-shadow: 0 8rpx 30rpx rgba(24, 144, 255, 0.1);
-	display: flex;
-	flex-direction: column;
-	align-items: center; /* 确保内容居中 */
-}
-
-.role-list {
-	display: flex;
-	white-space: nowrap;
-	gap: 20rpx;
-	padding: 10rpx 0;
-	align-items: center;
-	justify-content: center; /* 改为居中显示 */
-	width: 100%; /* 确保宽度100% */
-	overflow-x: auto;
-	-webkit-overflow-scrolling: touch;
-}
-
-.role-item {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	justify-content: center;
-	padding: 30rpx 40rpx;
-	background: #F8F9FA;
-	border-radius: 25rpx;
-	border: 2rpx solid transparent;
-	transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-	min-width: 200rpx; /* 确保最小宽�?*/
-	max-width: 250rpx; /* 限制最大宽�?*/
-	cursor: pointer;
 	position: relative;
 	overflow: hidden;
-	text-align: center;
-	flex-shrink: 0; /* 防止按钮被压�?*/
+	box-shadow: 0 15rpx 60rpx rgba(24, 144, 255, 0.2);
+	border: 3rpx solid rgba(24, 144, 255, 0.25);
+	min-height: 500rpx;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 }
 
-/* 添加滚动条样�?*/
-.role-list::-webkit-scrollbar {
-	height: 6rpx;
-}
-
-.role-list::-webkit-scrollbar-track {
-	background: #f1f1f1;
-	border-radius: 3rpx;
-}
-
-.role-list::-webkit-scrollbar-thumb {
-	background: #1890FF;
-	border-radius: 3rpx;
-}
-
-.role-list::-webkit-scrollbar-thumb:hover {
-	background: #40A9FF;
-}
-
-.role-item::before {
+.virtual-human-main::before {
 	content: '';
 	position: absolute;
-	top: 0;
-	left: 0;
-	right: 0;
-	height: 4rpx;
-	background: linear-gradient(90deg, #1890FF, #40A9FF);
-	transform: scaleX(0);
-	transition: transform 0.3s ease;
+	top: -50%;
+	left: -50%;
+	width: 200%;
+	height: 200%;
+	background: radial-gradient(circle, rgba(24, 144, 255, 0.08) 0%, transparent 70%);
+	animation: breathe 4s ease-in-out infinite;
 }
 
-.role-item.active {
-	background: linear-gradient(135deg, #E6F3FF 0%, #D6EBFF 100%);
-	border-color: #1890FF;
-	transform: translateY(-8rpx);
-	box-shadow: 0 12rpx 35rpx rgba(24, 144, 255, 0.25);
+@keyframes breathe {
+	0%, 100% { transform: scale(0.8); opacity: 0.5; }
+	50% { transform: scale(1.2); opacity: 0.8; }
 }
 
-.role-item.active::before {
-	transform: scaleX(1);
+.virtual-avatar-container {
+	position: relative;
+	z-index: 1;
 }
 
-.role-item:active {
-	transform: scale(0.98);
+.virtual-avatar {
+	width: 240rpx;
+	height: 240rpx;
+	background: linear-gradient(135deg, #1890FF 0%, #40A9FF 100%);
+	border-radius: 50%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	margin: 0 auto 50rpx auto;
+	box-shadow: 0 20rpx 60rpx rgba(24, 144, 255, 0.35);
+	animation: float 3s ease-in-out infinite;
 }
 
-.role-icon {
-	font-size: 56rpx;
-	margin-bottom: 20rpx;
-	transition: transform 0.3s ease;
+@keyframes float {
+	0%, 100% { transform: translateY(0px); }
+	50% { transform: translateY(-20rpx); }
 }
 
-.role-item.active .role-icon {
-	transform: scale(1.1);
+.avatar-icon {
+	font-size: 120rpx;
+	color: white;
 }
 
-.role-name {
-	font-size: 30rpx;
-	font-weight: 700;
-	color: #333;
-	margin-bottom: 12rpx;
-}
-
-.role-desc {
-	font-size: 24rpx;
-	color: #666;
+.virtual-status {
 	text-align: center;
+}
+
+.status-text {
+	font-size: 42rpx;
+	color: #333;
+	font-weight: 700;
+	margin-bottom: 20rpx;
+	line-height: 1.5;
+}
+
+.status-desc {
+	font-size: 32rpx;
+	color: #666;
 	line-height: 1.4;
 }
 
-
-
-/* 聊天容器样式 - 优化�?*/
-.chat-container {
+/* 对话聊天区域 */
+.chat-section {
 	background: #fff;
 	border-radius: 25rpx;
 	padding: 35rpx;
-	min-height: calc(100vh - 600rpx);
 	display: flex;
 	flex-direction: column;
 	box-shadow: 0 8rpx 35rpx rgba(24, 144, 255, 0.15);
 	border: 2rpx solid #E6F3FF;
 }
 
-.message-list {
-	flex: 1;
-	margin-bottom: 35rpx;
-	padding: 10rpx 0;
+
+
+.welcome-message {
+	text-align: center;
+	padding: 30rpx;
 }
 
-.message-item {
-	display: flex;
-	margin-bottom: 35rpx;
-	align-items: flex-start;
-	animation: messageSlideIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-@keyframes messageSlideIn {
-	from {
-		opacity: 0;
-		transform: translateY(20rpx);
-	}
-	to {
-		opacity: 1;
-		transform: translateY(0);
-	}
-}
-
-.user-message {
-	flex-direction: row-reverse;
-}
-
-.ai-message {
-	flex-direction: row;
-}
-
-.avatar {
-	width: 90rpx;
-	height: 90rpx;
-	border-radius: 50%;
-	background: #E6F3FF;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	font-size: 40rpx;
-	margin: 0 25rpx;
-	box-shadow: 0 4rpx 15rpx rgba(24, 144, 255, 0.2);
-	transition: transform 0.3s ease;
-}
-
-.message-item:hover .avatar {
-	transform: scale(1.05);
-}
-
-.content {
-	max-width: 75%;
-	background: #F8F9FA;
-	border-radius: 25rpx;
-	padding: 25rpx;
+.welcome-text {
 	font-size: 30rpx;
+	color: #333;
 	line-height: 1.6;
-	position: relative;
-	box-shadow: 0 4rpx 15rpx rgba(0, 0, 0, 0.08);
-	transition: all 0.3s ease;
+	display: block;
 }
 
-.content::before {
-	content: '';
-	position: absolute;
-	top: 20rpx;
-	width: 0;
-	height: 0;
-	border: 10rpx solid transparent;
-}
 
-.ai-message .content::before {
-	left: -20rpx;
-	border-right-color: #F8F9FA;
-}
-
-.user-message .content::before {
-	right: -20rpx;
-	border-left-color: #1890FF;
-}
-
-.user-message .content {
-	background: linear-gradient(135deg, #1890FF 0%, #40A9FF 100%);
-	color: white;
-	box-shadow: 0 6rpx 20rpx rgba(24, 144, 255, 0.25);
-}
 
 /* 输入区域样式 - 优化�?*/
 .input-area {
@@ -1722,6 +1633,100 @@
 .btn-confirm:active {
 	transform: scale(0.95);
 	box-shadow: 0 4rpx 12rpx rgba(24, 144, 255, 0.4);
+}
+
+/* 角色选择弹窗样式 - 心灵伙伴 */
+.role-selector-modal {
+	max-width: 750rpx;
+	width: 90%;
+}
+
+.role-intro {
+	text-align: center;
+	margin-bottom: 30rpx;
+	padding: 20rpx;
+	background: linear-gradient(135deg, #F8F9FA 0%, #E6F3FF 100%);
+	border-radius: 15rpx;
+}
+
+.intro-text {
+	font-size: 28rpx;
+	color: #666;
+	line-height: 1.5;
+}
+
+.role-grid {
+	display: flex;
+	flex-direction: column;
+	gap: 25rpx;
+}
+
+.role-card {
+	display: flex;
+	align-items: center;
+	padding: 35rpx;
+	background: #F8F9FA;
+	border-radius: 25rpx;
+	border: 3rpx solid transparent;
+	transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+	cursor: pointer;
+	gap: 25rpx;
+	position: relative;
+	overflow: hidden;
+}
+
+.role-card:active {
+	transform: scale(0.98);
+}
+
+.role-card.active {
+	background: linear-gradient(135deg, #E6F3FF 0%, #D6EBFF 100%);
+	border-color: #1890FF;
+	box-shadow: 0 10rpx 30rpx rgba(24, 144, 255, 0.25);
+	transform: translateY(-5rpx);
+}
+
+.role-icon-large {
+	font-size: 70rpx;
+	width: 90rpx;
+	height: 90rpx;
+	background: linear-gradient(135deg, rgba(24, 144, 255, 0.1) 0%, rgba(64, 169, 255, 0.1) 100%);
+	border-radius: 50%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+	box-shadow: 0 4rpx 15rpx rgba(24, 144, 255, 0.2);
+}
+
+.role-name-large {
+	font-size: 34rpx;
+	font-weight: 700;
+	color: #333;
+	margin-bottom: 10rpx;
+}
+
+.role-desc-large {
+	font-size: 26rpx;
+	color: #666;
+	line-height: 1.4;
+	flex: 1;
+}
+
+.role-tag {
+	position: absolute;
+	top: 15rpx;
+	right: 15rpx;
+	background: linear-gradient(135deg, #1890FF 0%, #40A9FF 100%);
+	color: white;
+	padding: 8rpx 15rpx;
+	border-radius: 20rpx;
+	box-shadow: 0 4rpx 10rpx rgba(24, 144, 255, 0.3);
+}
+
+.tag-text {
+	font-size: 22rpx;
+	font-weight: 600;
 }
 
 /* 加载动画样式 - 优化�?*/

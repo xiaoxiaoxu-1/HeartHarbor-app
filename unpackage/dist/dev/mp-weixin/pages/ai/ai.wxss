@@ -44,25 +44,39 @@
 	font-weight: 600;
 }
 
-/* 当前设置显示 - 优化�?*/
-.current-settings.data-v-fdb58938 {
-	background: rgba(255, 255, 255, 0.95);
-	padding: 18rpx 30rpx;
-	border-radius: 25rpx;
-	border: 2rpx solid #E6F3FF;
-	box-shadow: 0 6rpx 20rpx rgba(24, 144, 255, 0.15);
-	min-height: 80rpx;
+/* 角色选择按钮 - 新增 */
+.role-selector-btn.data-v-fdb58938 {
 	display: flex;
 	align-items: center;
 	justify-content: center;
+	gap: 15rpx;
+	padding: 18rpx 30rpx;
+	background: linear-gradient(135deg, #E6F3FF 0%, #F5F9FF 100%);
+	border-radius: 25rpx;
+	border: 2rpx solid #1890FF;
+	box-shadow: 0 6rpx 20rpx rgba(24, 144, 255, 0.15);
+	min-height: 80rpx;
 	flex: 1;
 	margin: 0 20rpx;
+	transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
-.settings-text.data-v-fdb58938 {
+.role-selector-btn.data-v-fdb58938:active {
+	background: #D6EBFF;
+	transform: scale(0.98);
+	box-shadow: 0 4rpx 12rpx rgba(24, 144, 255, 0.2);
+}
+.role-selector-btn .role-icon.data-v-fdb58938 {
+	font-size: 36rpx;
+}
+.role-selector-btn .role-name.data-v-fdb58938 {
 	font-size: 28rpx;
-	color: #333;
-	font-weight: 600;
-	text-align: center;
+	color: #1890FF;
+	font-weight: 700;
+}
+.role-selector-btn .change-text.data-v-fdb58938 {
+	font-size: 24rpx;
+	color: #666;
+	font-weight: 500;
 }
 
 /* 对话操作按钮�?- 优化�?*/
@@ -101,215 +115,106 @@
 
 
 
-/* 功能区标�?- 优化�?*/
-.section-title.data-v-fdb58938 {
-	display: block;
-	font-size: 34rpx;
-	font-weight: 700;
-	color: #1890FF;
-	margin-bottom: 25rpx;
-	text-align: center;
-	position: relative;
-}
-.section-title.data-v-fdb58938::after {
-	content: '';
-	display: block;
-	width: 60rpx;
-	height: 4rpx;
-	background: linear-gradient(90deg, #1890FF, #40A9FF);
-	border-radius: 2rpx;
-	margin: 10rpx auto 0;
-}
 
-/* 角色选择区样�?- 优化�?*/
-.role-section.data-v-fdb58938 {
-	margin-bottom: 35rpx;
-	background: rgba(255, 255, 255, 0.95);
-	border-radius: 25rpx;
-	padding: 30rpx;
-	border: 2rpx solid #E6F3FF;
-	box-shadow: 0 8rpx 30rpx rgba(24, 144, 255, 0.1);
-	display: flex;
-	flex-direction: column;
-	align-items: center; /* 确保内容居中 */
-}
-.role-list.data-v-fdb58938 {
-	display: flex;
-	white-space: nowrap;
-	gap: 20rpx;
-	padding: 10rpx 0;
-	align-items: center;
-	justify-content: center; /* 改为居中显示 */
-	width: 100%; /* 确保宽度100% */
-	overflow-x: auto;
-	-webkit-overflow-scrolling: touch;
-}
-.role-item.data-v-fdb58938 {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	justify-content: center;
-	padding: 30rpx 40rpx;
-	background: #F8F9FA;
-	border-radius: 25rpx;
-	border: 2rpx solid transparent;
-	transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-	min-width: 200rpx; /* 确保最小宽�?*/
-	max-width: 250rpx; /* 限制最大宽�?*/
-	cursor: pointer;
+
+
+
+/* 虚拟人主题展示区域 - 扩大设计 */
+.virtual-human-main.data-v-fdb58938 {
+	background: linear-gradient(135deg, #E6F3FF 0%, #F5F9FF 100%);
+	border-radius: 40rpx;
+	padding: 100rpx 60rpx;
+	margin-bottom: 40rpx;
+	text-align: center;
 	position: relative;
 	overflow: hidden;
-	text-align: center;
-	flex-shrink: 0; /* 防止按钮被压�?*/
+	box-shadow: 0 15rpx 60rpx rgba(24, 144, 255, 0.2);
+	border: 3rpx solid rgba(24, 144, 255, 0.25);
+	min-height: 500rpx;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 }
-
-/* 添加滚动条样�?*/
-.role-list.data-v-fdb58938::-webkit-scrollbar {
-	height: 6rpx;
-}
-.role-list.data-v-fdb58938::-webkit-scrollbar-track {
-	background: #f1f1f1;
-	border-radius: 3rpx;
-}
-.role-list.data-v-fdb58938::-webkit-scrollbar-thumb {
-	background: #1890FF;
-	border-radius: 3rpx;
-}
-.role-list.data-v-fdb58938::-webkit-scrollbar-thumb:hover {
-	background: #40A9FF;
-}
-.role-item.data-v-fdb58938::before {
+.virtual-human-main.data-v-fdb58938::before {
 	content: '';
 	position: absolute;
-	top: 0;
-	left: 0;
-	right: 0;
-	height: 4rpx;
-	background: linear-gradient(90deg, #1890FF, #40A9FF);
-	transform: scaleX(0);
-	transition: transform 0.3s ease;
+	top: -50%;
+	left: -50%;
+	width: 200%;
+	height: 200%;
+	background: radial-gradient(circle, rgba(24, 144, 255, 0.08) 0%, transparent 70%);
+	animation: breathe-fdb58938 4s ease-in-out infinite;
 }
-.role-item.active.data-v-fdb58938 {
-	background: linear-gradient(135deg, #E6F3FF 0%, #D6EBFF 100%);
-	border-color: #1890FF;
-	transform: translateY(-8rpx);
-	box-shadow: 0 12rpx 35rpx rgba(24, 144, 255, 0.25);
+@keyframes breathe-fdb58938 {
+0%, 100% { transform: scale(0.8); opacity: 0.5;
 }
-.role-item.active.data-v-fdb58938::before {
-	transform: scaleX(1);
+50% { transform: scale(1.2); opacity: 0.8;
 }
-.role-item.data-v-fdb58938:active {
-	transform: scale(0.98);
 }
-.role-icon.data-v-fdb58938 {
-	font-size: 56rpx;
-	margin-bottom: 20rpx;
-	transition: transform 0.3s ease;
+.virtual-avatar-container.data-v-fdb58938 {
+	position: relative;
+	z-index: 1;
 }
-.role-item.active .role-icon.data-v-fdb58938 {
-	transform: scale(1.1);
+.virtual-avatar.data-v-fdb58938 {
+	width: 240rpx;
+	height: 240rpx;
+	background: linear-gradient(135deg, #1890FF 0%, #40A9FF 100%);
+	border-radius: 50%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	margin: 0 auto 50rpx auto;
+	box-shadow: 0 20rpx 60rpx rgba(24, 144, 255, 0.35);
+	animation: float-fdb58938 3s ease-in-out infinite;
 }
-.role-name.data-v-fdb58938 {
-	font-size: 30rpx;
-	font-weight: 700;
-	color: #333;
-	margin-bottom: 12rpx;
+@keyframes float-fdb58938 {
+0%, 100% { transform: translateY(0px);
 }
-.role-desc.data-v-fdb58938 {
-	font-size: 24rpx;
-	color: #666;
+50% { transform: translateY(-20rpx);
+}
+}
+.avatar-icon.data-v-fdb58938 {
+	font-size: 120rpx;
+	color: white;
+}
+.virtual-status.data-v-fdb58938 {
 	text-align: center;
+}
+.status-text.data-v-fdb58938 {
+	font-size: 42rpx;
+	color: #333;
+	font-weight: 700;
+	margin-bottom: 20rpx;
+	line-height: 1.5;
+}
+.status-desc.data-v-fdb58938 {
+	font-size: 32rpx;
+	color: #666;
 	line-height: 1.4;
 }
 
-
-
-/* 聊天容器样式 - 优化�?*/
-.chat-container.data-v-fdb58938 {
+/* 对话聊天区域 */
+.chat-section.data-v-fdb58938 {
 	background: #fff;
 	border-radius: 25rpx;
 	padding: 35rpx;
-	min-height: calc(100vh - 600rpx);
 	display: flex;
 	flex-direction: column;
 	box-shadow: 0 8rpx 35rpx rgba(24, 144, 255, 0.15);
 	border: 2rpx solid #E6F3FF;
 }
-.message-list.data-v-fdb58938 {
-	flex: 1;
-	margin-bottom: 35rpx;
-	padding: 10rpx 0;
+.welcome-message.data-v-fdb58938 {
+	text-align: center;
+	padding: 30rpx;
 }
-.message-item.data-v-fdb58938 {
-	display: flex;
-	margin-bottom: 35rpx;
-	align-items: flex-start;
-	animation: messageSlideIn-fdb58938 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-}
-@keyframes messageSlideIn-fdb58938 {
-from {
-		opacity: 0;
-		transform: translateY(20rpx);
-}
-to {
-		opacity: 1;
-		transform: translateY(0);
-}
-}
-.user-message.data-v-fdb58938 {
-	flex-direction: row-reverse;
-}
-.ai-message.data-v-fdb58938 {
-	flex-direction: row;
-}
-.avatar.data-v-fdb58938 {
-	width: 90rpx;
-	height: 90rpx;
-	border-radius: 50%;
-	background: #E6F3FF;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	font-size: 40rpx;
-	margin: 0 25rpx;
-	box-shadow: 0 4rpx 15rpx rgba(24, 144, 255, 0.2);
-	transition: transform 0.3s ease;
-}
-.message-item:hover .avatar.data-v-fdb58938 {
-	transform: scale(1.05);
-}
-.content.data-v-fdb58938 {
-	max-width: 75%;
-	background: #F8F9FA;
-	border-radius: 25rpx;
-	padding: 25rpx;
+.welcome-text.data-v-fdb58938 {
 	font-size: 30rpx;
+	color: #333;
 	line-height: 1.6;
-	position: relative;
-	box-shadow: 0 4rpx 15rpx rgba(0, 0, 0, 0.08);
-	transition: all 0.3s ease;
+	display: block;
 }
-.content.data-v-fdb58938::before {
-	content: '';
-	position: absolute;
-	top: 20rpx;
-	width: 0;
-	height: 0;
-	border: 10rpx solid transparent;
-}
-.ai-message .content.data-v-fdb58938::before {
-	left: -20rpx;
-	border-right-color: #F8F9FA;
-}
-.user-message .content.data-v-fdb58938::before {
-	right: -20rpx;
-	border-left-color: #1890FF;
-}
-.user-message .content.data-v-fdb58938 {
-	background: linear-gradient(135deg, #1890FF 0%, #40A9FF 100%);
-	color: white;
-	box-shadow: 0 6rpx 20rpx rgba(24, 144, 255, 0.25);
-}
+
+
 
 /* 输入区域样式 - 优化�?*/
 .input-area.data-v-fdb58938 {
@@ -696,6 +601,89 @@ to {
 .btn-confirm.data-v-fdb58938:active {
 	transform: scale(0.95);
 	box-shadow: 0 4rpx 12rpx rgba(24, 144, 255, 0.4);
+}
+
+/* 角色选择弹窗样式 - 心灵伙伴 */
+.role-selector-modal.data-v-fdb58938 {
+	max-width: 750rpx;
+	width: 90%;
+}
+.role-intro.data-v-fdb58938 {
+	text-align: center;
+	margin-bottom: 30rpx;
+	padding: 20rpx;
+	background: linear-gradient(135deg, #F8F9FA 0%, #E6F3FF 100%);
+	border-radius: 15rpx;
+}
+.intro-text.data-v-fdb58938 {
+	font-size: 28rpx;
+	color: #666;
+	line-height: 1.5;
+}
+.role-grid.data-v-fdb58938 {
+	display: flex;
+	flex-direction: column;
+	gap: 25rpx;
+}
+.role-card.data-v-fdb58938 {
+	display: flex;
+	align-items: center;
+	padding: 35rpx;
+	background: #F8F9FA;
+	border-radius: 25rpx;
+	border: 3rpx solid transparent;
+	transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+	cursor: pointer;
+	gap: 25rpx;
+	position: relative;
+	overflow: hidden;
+}
+.role-card.data-v-fdb58938:active {
+	transform: scale(0.98);
+}
+.role-card.active.data-v-fdb58938 {
+	background: linear-gradient(135deg, #E6F3FF 0%, #D6EBFF 100%);
+	border-color: #1890FF;
+	box-shadow: 0 10rpx 30rpx rgba(24, 144, 255, 0.25);
+	transform: translateY(-5rpx);
+}
+.role-icon-large.data-v-fdb58938 {
+	font-size: 70rpx;
+	width: 90rpx;
+	height: 90rpx;
+	background: linear-gradient(135deg, rgba(24, 144, 255, 0.1) 0%, rgba(64, 169, 255, 0.1) 100%);
+	border-radius: 50%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+	box-shadow: 0 4rpx 15rpx rgba(24, 144, 255, 0.2);
+}
+.role-name-large.data-v-fdb58938 {
+	font-size: 34rpx;
+	font-weight: 700;
+	color: #333;
+	margin-bottom: 10rpx;
+}
+.role-desc-large.data-v-fdb58938 {
+	font-size: 26rpx;
+	color: #666;
+	line-height: 1.4;
+	flex: 1;
+}
+.role-tag.data-v-fdb58938 {
+	position: absolute;
+	top: 15rpx;
+	right: 15rpx;
+	background: linear-gradient(135deg, #1890FF 0%, #40A9FF 100%);
+	color: white;
+	padding: 8rpx 15rpx;
+	border-radius: 20rpx;
+	box-shadow: 0 4rpx 10rpx rgba(24, 144, 255, 0.3);
+}
+.tag-text.data-v-fdb58938 {
+	font-size: 22rpx;
+	font-weight: 600;
 }
 
 /* 加载动画样式 - 优化�?*/

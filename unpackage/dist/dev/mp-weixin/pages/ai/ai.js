@@ -16,6 +16,8 @@ const _sfc_main = {
       isLoading: false,
       isLogin: false,
       // 登录状态
+      showRoleSelectorModal: false,
+      // 角色选择弹窗状态
       // 对话管理相关
       conversations: [],
       currentConversationId: null,
@@ -75,7 +77,7 @@ const _sfc_main = {
           this.isLogin = isLogin || false;
         }
       } catch (error) {
-        common_vendor.index.__f__("error", "at pages/ai/ai.vue:243", "检查登录状态失败:", error);
+        common_vendor.index.__f__("error", "at pages/ai/ai.vue:249", "检查登录状态失败:", error);
         this.isLogin = false;
       }
     },
@@ -90,10 +92,10 @@ const _sfc_main = {
               common_vendor.index.navigateTo({
                 url: "/pages/login/login",
                 success: () => {
-                  common_vendor.index.__f__("log", "at pages/ai/ai.vue:259", "导航成功：跳转到登录页面");
+                  common_vendor.index.__f__("log", "at pages/ai/ai.vue:265", "导航成功：跳转到登录页面");
                 },
                 fail: (err) => {
-                  common_vendor.index.__f__("error", "at pages/ai/ai.vue:262", "导航失败:", err);
+                  common_vendor.index.__f__("error", "at pages/ai/ai.vue:268", "导航失败:", err);
                   common_vendor.index.showToast({
                     title: "页面跳转失败，请重试",
                     icon: "none"
@@ -120,7 +122,7 @@ const _sfc_main = {
         }
         await this.loadConversationStats();
       } catch (error) {
-        common_vendor.index.__f__("error", "at pages/ai/ai.vue:299", "初始化对话系统失败", error);
+        common_vendor.index.__f__("error", "at pages/ai/ai.vue:305", "初始化对话系统失败", error);
         common_vendor.index.showToast({
           title: "对话系统初始化失败",
           icon: "none",
@@ -134,7 +136,7 @@ const _sfc_main = {
         this.conversations = await utils_supabase.conversationService.getUserConversations();
         this.conversations.sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at));
       } catch (error) {
-        common_vendor.index.__f__("error", "at pages/ai/ai.vue:315", "加载对话列表失败:", error);
+        common_vendor.index.__f__("error", "at pages/ai/ai.vue:321", "加载对话列表失败:", error);
       }
     },
     // 加载统计信息
@@ -142,7 +144,7 @@ const _sfc_main = {
       try {
         this.conversationStats = await utils_supabase.conversationService.getConversationStats();
       } catch (error) {
-        common_vendor.index.__f__("error", "at pages/ai/ai.vue:324", "加载统计信息失败:", error);
+        common_vendor.index.__f__("error", "at pages/ai/ai.vue:330", "加载统计信息失败:", error);
       }
     },
     // 导航到登录页面
@@ -150,10 +152,10 @@ const _sfc_main = {
       common_vendor.index.navigateTo({
         url: "/pages/login/login",
         success: () => {
-          common_vendor.index.__f__("log", "at pages/ai/ai.vue:333", "导航成功：跳转到登录页面");
+          common_vendor.index.__f__("log", "at pages/ai/ai.vue:339", "导航成功：跳转到登录页面");
         },
         fail: (err) => {
-          common_vendor.index.__f__("error", "at pages/ai/ai.vue:336", "导航失败:", err);
+          common_vendor.index.__f__("error", "at pages/ai/ai.vue:342", "导航失败:", err);
           common_vendor.index.showToast({
             title: "页面跳转失败，请重试",
             icon: "none"
@@ -166,10 +168,10 @@ const _sfc_main = {
       common_vendor.index.navigateTo({
         url: "/pages/register/register",
         success: () => {
-          common_vendor.index.__f__("log", "at pages/ai/ai.vue:350", "导航成功：跳转到注册页面");
+          common_vendor.index.__f__("log", "at pages/ai/ai.vue:356", "导航成功：跳转到注册页面");
         },
         fail: (err) => {
-          common_vendor.index.__f__("error", "at pages/ai/ai.vue:353", "导航失败:", err);
+          common_vendor.index.__f__("error", "at pages/ai/ai.vue:359", "导航失败:", err);
           common_vendor.index.showToast({
             title: "页面跳转失败，请重试",
             icon: "none"
@@ -205,7 +207,7 @@ const _sfc_main = {
           duration: 1500
         });
       } catch (error) {
-        common_vendor.index.__f__("error", "at pages/ai/ai.vue:397", "创建新对话失�?", error);
+        common_vendor.index.__f__("error", "at pages/ai/ai.vue:403", "创建新对话失�?", error);
         common_vendor.index.showToast({
           title: "创建对话失败",
           icon: "none",
@@ -240,7 +242,7 @@ const _sfc_main = {
           this.scrollTop = 99999;
         });
       } catch (error) {
-        common_vendor.index.__f__("error", "at pages/ai/ai.vue:444", "加载对话失败:", error);
+        common_vendor.index.__f__("error", "at pages/ai/ai.vue:450", "加载对话失败:", error);
         common_vendor.index.showToast({
           title: "加载对话失败",
           icon: "none",
@@ -276,7 +278,7 @@ const _sfc_main = {
                 duration: 1500
               });
             } catch (error) {
-              common_vendor.index.__f__("error", "at pages/ai/ai.vue:489", "删除对话失败:", error);
+              common_vendor.index.__f__("error", "at pages/ai/ai.vue:495", "删除对话失败:", error);
               common_vendor.index.showToast({
                 title: "删除失败",
                 icon: "none",
@@ -319,7 +321,7 @@ const _sfc_main = {
           duration: 1500
         });
       } catch (error) {
-        common_vendor.index.__f__("error", "at pages/ai/ai.vue:540", "更新标题失败:", error);
+        common_vendor.index.__f__("error", "at pages/ai/ai.vue:546", "更新标题失败:", error);
         common_vendor.index.showToast({
           title: "更新失败",
           icon: "none",
@@ -371,9 +373,20 @@ const _sfc_main = {
           this.currentRole = this.roles[0];
         }
       } catch (e) {
-        common_vendor.index.__f__("log", "at pages/ai/ai.vue:602", "加载用户偏好失败", e);
+        common_vendor.index.__f__("log", "at pages/ai/ai.vue:608", "加载用户偏好失败", e);
         this.currentRole = this.roles[0];
       }
+    },
+    // 显示角色选择器
+    showRoleSelector() {
+      if (!this.checkLoginAndPrompt()) {
+        return;
+      }
+      this.showRoleSelectorModal = true;
+    },
+    // 关闭角色选择器
+    closeRoleSelector() {
+      this.showRoleSelectorModal = false;
     },
     // 选择角色
     selectRole(roleId) {
@@ -384,21 +397,20 @@ const _sfc_main = {
       if (role) {
         this.currentRole = role;
         common_vendor.index.setStorageSync("ai_role", roleId);
+        this.closeRoleSelector();
         this.addRoleGreeting();
       }
     },
     // 角色切换问候语
     addRoleGreeting() {
       const greetings = {
-        companion: "你好！我是你的心灵伙伴，我会用温暖的心倾听你的每一个故事。有什么想和我分享的吗？",
-        advisor: "您好！我是您的专业心理顾问，我将用专业的知识为您提供理性的分析和建议。请告诉我您的情况？"
+        companion: "你好！我是你的心灵伙伴，我会用温暖的心倾听你的每一个故事。",
+        advisor: "您好！我是您的专业心理顾问，我将用专业的知识为您提供理性的分析和建议。"
       };
-      this.messages.push({
-        role: "assistant",
-        content: greetings[this.currentRole.id]
-      });
-      this.$nextTick(() => {
-        this.scrollTop = 99999;
+      common_vendor.index.showToast({
+        title: greetings[this.currentRole.id],
+        icon: "none",
+        duration: 3e3
       });
     },
     // 跳转到虚拟人页面
@@ -409,10 +421,10 @@ const _sfc_main = {
       common_vendor.index.navigateTo({
         url: "/pages/virtual-human/xf-virtual-human",
         success: () => {
-          common_vendor.index.__f__("log", "at pages/ai/ai.vue:650", "导航成功：跳转到虚拟人页面");
+          common_vendor.index.__f__("log", "at pages/ai/ai.vue:670", "导航成功：跳转到虚拟人页面");
         },
         fail: (err) => {
-          common_vendor.index.__f__("error", "at pages/ai/ai.vue:653", "导航失败:", err);
+          common_vendor.index.__f__("error", "at pages/ai/ai.vue:673", "导航失败:", err);
           common_vendor.index.showToast({
             title: "页面跳转失败，请重试",
             icon: "none"
@@ -444,7 +456,7 @@ const _sfc_main = {
           this.inputText
         );
       } catch (error) {
-        common_vendor.index.__f__("error", "at pages/ai/ai.vue:692", "保存用户消息失败:", error);
+        common_vendor.index.__f__("error", "at pages/ai/ai.vue:712", "保存用户消息失败:", error);
       }
       const userMessage = this.inputText;
       this.inputText = "";
@@ -465,7 +477,7 @@ const _sfc_main = {
             aiResponse
           );
         } catch (error) {
-          common_vendor.index.__f__("error", "at pages/ai/ai.vue:722", "保存AI消息失败:", error);
+          common_vendor.index.__f__("error", "at pages/ai/ai.vue:742", "保存AI消息失败:", error);
         }
         common_vendor.index.showToast({
           title: "AI回复已生成",
@@ -473,7 +485,7 @@ const _sfc_main = {
           duration: 1500
         });
       } catch (error) {
-        common_vendor.index.__f__("error", "at pages/ai/ai.vue:733", "Dify API调用失败:", error);
+        common_vendor.index.__f__("error", "at pages/ai/ai.vue:753", "Dify API调用失败:", error);
         let errorTitle = "网络异常";
         if (error.message.includes("超时")) {
           errorTitle = "请求超时";
@@ -498,7 +510,7 @@ const _sfc_main = {
             fallbackResponse
           );
         } catch (error2) {
-          common_vendor.index.__f__("error", "at pages/ai/ai.vue:772", "保存降级消息失败:", error2);
+          common_vendor.index.__f__("error", "at pages/ai/ai.vue:792", "保存降级消息失败:", error2);
         }
         common_vendor.index.showToast({
           title: `${errorTitle}�?{errorMessage}`,
@@ -524,9 +536,9 @@ const _sfc_main = {
         const timeout = setTimeout(() => {
           reject(new Error("请求超时，请检查网络连接"));
         }, 1e4);
-        common_vendor.index.__f__("log", "at pages/ai/ai.vue:809", "Dify API配置:", this.difyConfig);
-        common_vendor.index.__f__("log", "at pages/ai/ai.vue:810", "完整URL:", this.difyConfig.apiUrl + this.difyConfig.endpoint);
-        common_vendor.index.__f__("log", "at pages/ai/ai.vue:811", "结构化输入数据", inputs);
+        common_vendor.index.__f__("log", "at pages/ai/ai.vue:829", "Dify API配置:", this.difyConfig);
+        common_vendor.index.__f__("log", "at pages/ai/ai.vue:830", "完整URL:", this.difyConfig.apiUrl + this.difyConfig.endpoint);
+        common_vendor.index.__f__("log", "at pages/ai/ai.vue:831", "结构化输入数据", inputs);
         common_vendor.index.request({
           url: this.difyConfig.apiUrl + this.difyConfig.endpoint,
           method: "POST",
@@ -549,7 +561,7 @@ const _sfc_main = {
           },
           success: (res) => {
             clearTimeout(timeout);
-            common_vendor.index.__f__("log", "at pages/ai/ai.vue:834", "Dify API响应:", res);
+            common_vendor.index.__f__("log", "at pages/ai/ai.vue:854", "Dify API响应:", res);
             if (res.statusCode === 0) {
               reject(new Error("网络连接异常，请检查网络设置"));
               return;
@@ -589,7 +601,7 @@ const _sfc_main = {
           },
           fail: (err) => {
             clearTimeout(timeout);
-            common_vendor.index.__f__("error", "at pages/ai/ai.vue:883", "Dify API调用失败:", err);
+            common_vendor.index.__f__("error", "at pages/ai/ai.vue:903", "Dify API调用失败:", err);
             let errorMessage = "网络请求失败";
             if (err.errMsg) {
               if (err.errMsg.includes("timeout")) {
@@ -642,36 +654,14 @@ const _sfc_main = {
 function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
   return common_vendor.e({
     a: common_vendor.o((...args) => $options.showVirtualHumanPreview && $options.showVirtualHumanPreview(...args)),
-    b: common_vendor.t($data.currentRole.name),
-    c: common_vendor.o((...args) => $options.createNewConversation && $options.createNewConversation(...args)),
-    d: common_vendor.o((...args) => $options.toggleHistoryPanel && $options.toggleHistoryPanel(...args)),
-    e: common_vendor.f($data.roles, (role, k0, i0) => {
-      return {
-        a: common_vendor.t(role.icon),
-        b: common_vendor.t(role.name),
-        c: common_vendor.t(role.description),
-        d: role.id,
-        e: $data.currentRole.id === role.id ? 1 : "",
-        f: common_vendor.o(($event) => $options.selectRole(role.id), role.id)
-      };
-    }),
-    f: common_vendor.f($data.messages, (msg, index, i0) => {
-      return common_vendor.e({
-        a: msg.role === "user"
-      }, msg.role === "user" ? {} : {
-        b: common_vendor.t($data.currentRole.icon)
-      }, {
-        c: common_vendor.t(msg.content),
-        d: index,
-        e: msg.role === "user" ? 1 : "",
-        f: msg.role === "assistant" ? 1 : ""
-      });
-    }),
-    g: $data.isLoading
-  }, $data.isLoading ? {
-    h: common_vendor.t($data.currentRole.icon)
-  } : {}, {
-    i: $data.scrollTop,
+    b: common_vendor.t($data.currentRole.icon),
+    c: common_vendor.t($data.currentRole.name),
+    d: common_vendor.o((...args) => $options.showRoleSelector && $options.showRoleSelector(...args)),
+    e: common_vendor.o((...args) => $options.createNewConversation && $options.createNewConversation(...args)),
+    f: common_vendor.o((...args) => $options.toggleHistoryPanel && $options.toggleHistoryPanel(...args)),
+    g: common_vendor.t($data.currentRole.icon),
+    h: common_vendor.t($data.currentRole.name),
+    i: common_vendor.t($data.currentRole.description),
     j: common_vendor.o((...args) => $options.sendMessage && $options.sendMessage(...args)),
     k: $data.inputText,
     l: common_vendor.o(($event) => $data.inputText = $event.detail.value),
@@ -709,6 +699,22 @@ function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
     B: common_vendor.o(($event) => $data.editingTitle = $event.detail.value),
     C: common_vendor.o((...args) => $options.closeEditTitleModal && $options.closeEditTitleModal(...args)),
     D: common_vendor.o((...args) => $options.confirmEditTitle && $options.confirmEditTitle(...args))
+  } : {}, {
+    E: $data.showRoleSelectorModal
+  }, $data.showRoleSelectorModal ? {
+    F: common_vendor.o((...args) => $options.closeRoleSelector && $options.closeRoleSelector(...args)),
+    G: common_vendor.f($data.roles, (role, k0, i0) => {
+      return common_vendor.e({
+        a: common_vendor.t(role.icon),
+        b: common_vendor.t(role.name),
+        c: common_vendor.t(role.description),
+        d: $data.currentRole.id === role.id
+      }, $data.currentRole.id === role.id ? {} : {}, {
+        e: role.id,
+        f: $data.currentRole.id === role.id ? 1 : "",
+        g: common_vendor.o(($event) => $options.selectRole(role.id), role.id)
+      });
+    })
   } : {});
 }
 const MiniProgramPage = /* @__PURE__ */ common_vendor._export_sfc(_sfc_main, [["render", _sfc_render], ["__scopeId", "data-v-fdb58938"]]);
